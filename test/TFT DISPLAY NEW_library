@@ -1,0 +1,103 @@
+CODE= #include <TFT_eSPI.h>
+
+TFT_eSPI tft = TFT_eSPI();
+
+#define BUZZER_PIN 26
+#define LED_PIN    13
+
+#define SCREEN_ROTATION 0   // Use 0 if your display gives 320x240
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
+
+  digitalWrite(BUZZER_PIN, LOW);
+  digitalWrite(LED_PIN, HIGH);
+
+  tft.init();
+  tft.setRotation(SCREEN_ROTATION);
+
+  int w = tft.width();
+  int h = tft.height();
+
+  Serial.print("Width: ");
+  Serial.println(w);
+  Serial.print("Height: ");
+  Serial.println(h);
+
+  tft.fillScreen(TFT_BLACK);
+
+  tft.drawRect(0, 0, w, h, TFT_RED);
+  tft.drawRect(2, 2, w - 4, h - 4, TFT_GREEN);
+  tft.drawRect(4, 4, w - 8, h - 8, TFT_YELLOW);
+
+  tft.setTextColor(TFT_GREEN, TFT_BLACK);
+  tft.setTextSize(3);
+  tft.setCursor(35, 25);
+  tft.println("ESP32 TFT");
+
+  tft.setTextColor(TFT_WHITE, TFT_BLACK);
+  tft.setTextSize(2);
+  tft.setCursor(35, 75);
+  tft.println("2.8 inch Display");
+
+  tft.setTextColor(TFT_CYAN, TFT_BLACK);
+  tft.setCursor(35, 115);
+  tft.println("Landscape Working");
+
+  tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+  tft.setCursor(35, 175);
+  tft.print("W:");
+  tft.print(w);
+  tft.print(" H:");
+  tft.println(h);
+}
+
+void loop() {
+}
+
+platformio.ini=
+[env:esp32dev]
+platform = espressif32
+board = esp32dev
+framework = arduino
+
+lib_deps =
+    bodmer/TFT_eSPI
+
+build_flags =
+    -D USER_SETUP_LOADED=1
+
+    -D ILI9342_DRIVER=1
+    ; If this does not work, change to:
+    ; -D ILI9341_DRIVER=1
+    ; or:
+    ; -D ILI9341_2_DRIVER=1
+
+    -D TFT_MISO=19
+    -D TFT_MOSI=23
+    -D TFT_SCLK=18
+
+    -D TFT_CS=15
+    -D TFT_DC=2
+    -D TFT_RST=4
+
+    -D TOUCH_CS=5
+
+    -D TFT_BL=13
+    -D TFT_BACKLIGHT_ON=HIGH
+
+    -D LOAD_GLCD=1
+    -D LOAD_FONT2=1
+    -D LOAD_FONT4=1
+    -D LOAD_FONT6=1
+    -D LOAD_FONT7=1
+    -D LOAD_FONT8=1
+    -D LOAD_GFXFF=1
+    -D SMOOTH_FONT=1
+
+    -D SPI_FREQUENCY=40000000
+    -D SPI_READ_FREQUENCY=20000000
+    -D SPI_TOUCH_FREQUENCY=2500000
